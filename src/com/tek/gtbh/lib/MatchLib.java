@@ -1,9 +1,9 @@
 package com.tek.gtbh.lib;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
@@ -13,22 +13,24 @@ public class MatchLib {
 	static ArrayList<String> words = new ArrayList<String>();
 	
 	public static void loadDictionary() {
-		InputStream dictionaryStream = MatchLib.class.getClassLoader().getResourceAsStream("dictionary.txt");
-		BufferedReader dictionaryReader = new BufferedReader(new InputStreamReader(dictionaryStream));
+		words.clear();
 		
-		String line;
+		String surl = "https://raw.githubusercontent.com/RedstoneTek/GTB-Helper/master/dictionary.txt";
+		
 		try {
-			while((line = dictionaryReader.readLine()) != null) {
-				words.add(line.replace(System.lineSeparator(), "").replace("-", " "));
+			URL url = new URL(surl);
+			URLConnection urlConnection = url.openConnection();
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+			
+			String line;
+			while((line = bufferedReader.readLine()) != null) {
+				words.add(line);
 			}
-		} catch (IOException e1) { }
+			
+			bufferedReader.close();
+		}catch(Exception e) { }
 		
-		try {
-			dictionaryReader.close();
-			dictionaryStream.close();
-		} catch (IOException e) { }
-		
-		System.out.println("Loaded dictionary with size " + words.size());
+		System.out.println("Loaded " + words.size() + " words");
 	}
 	
 	public static ArrayList<String> findMatches(char ignored, String query) {

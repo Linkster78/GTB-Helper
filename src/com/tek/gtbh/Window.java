@@ -13,6 +13,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import com.tek.gtbh.lib.MatchLib;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Window {
 
@@ -26,7 +29,7 @@ public class Window {
 
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 381, 300);
+		frame.setBounds(100, 100, 381, 330);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		frame.setTitle("Guess The Build [HELPER]");
@@ -47,22 +50,6 @@ public class Window {
 			  public void insertUpdate(DocumentEvent e) {
 			    change();
 			  }
-
-			  public void change() {
-			      ArrayList<String> matches = MatchLib.findMatches('#', textField.getText());
-			      
-			      if(matches == null) {
-			    	  output.setText("");
-			      }else {
-			    	  StringJoiner joiner = new StringJoiner(System.lineSeparator());
-			    	  
-			    	  for(String match : matches) {
-			    		  joiner.add(match);
-			    	  }
-			    	  
-			    	  output.setText(joiner.toString());
-			      }
-			  }
 		});
 		
 		JLabel lblYourWorduse = new JLabel("Your word: (USE '#' FOR UNKNOWN LETTERS)");
@@ -77,6 +64,33 @@ public class Window {
 		scrollPane.setBounds(10, 66, 355, 194);
 		frame.getContentPane().add(scrollPane);
 		
+		JButton btnNewButton = new JButton("Reload Dictionary");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				MatchLib.loadDictionary();
+				
+				change();
+			}
+		});
+		btnNewButton.setBounds(10, 267, 355, 23);
+		frame.getContentPane().add(btnNewButton);
+		
 		frame.setVisible(true);
+	}
+	
+	public void change() {
+	      ArrayList<String> matches = MatchLib.findMatches('#', textField.getText());
+	      
+	      if(matches == null) {
+	    	  output.setText("");
+	      }else {
+	    	  StringJoiner joiner = new StringJoiner(System.lineSeparator());
+	    	  
+	    	  for(String match : matches) {
+	    		  joiner.add(match);
+	    	  }
+	    	  
+	    	  output.setText(joiner.toString());
+	      }
 	}
 }
